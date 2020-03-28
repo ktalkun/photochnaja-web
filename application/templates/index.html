@@ -2,9 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hello page</title>
+    <title>Backend message</title>
+    <script type=text/javascript src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
 </head>
 <body>
-<p>Hello, World!</p>
+<script>
+    $.ajax({
+        type: "GET",
+        url: "{{ api_url }}",
+        type: 'GET',
+        success: function (response) {
+            var json = jQuery.parseJSON(response)
+            $('p').html(json.message)
+            console.log(response);
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+</script>
+<p></p>
 </body>
 </html>
