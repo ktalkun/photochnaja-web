@@ -121,6 +121,49 @@ const toolbar = Vue.component('toolbar', {
     }
 )
 
+const signinForm = Vue.component('signin-form', {
+    template: `
+        <form
+            v-on:submit.prevent="signin"
+            class="mx-auto"
+            id="signin-form"
+            method="post">
+            <v-text-field
+                v-model="login"
+                type="text"
+                name="login"
+                placeholder="Login"
+                required/>
+            <v-text-field
+                v-model="password"
+                type="password"
+                name="password"
+                placeholder="Password"
+                required/>
+            <v-btn
+                block
+                large
+                outlined
+                color="primary"
+                form="signin-form"
+                type="submit">
+                Sign in
+            </v-btn>
+            <slot></slot>
+        </form>
+    `,
+    data() {
+        return {
+            login: '',
+            password: ''
+        };
+    },
+    methods: {
+        signin: function (event) {
+        }
+    }
+});
+
 const footer = Vue.component('ph-footer', {
     template: `
         <v-footer fixed>
