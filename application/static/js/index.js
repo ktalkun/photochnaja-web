@@ -160,6 +160,13 @@ const signinForm = Vue.component('signin-form', {
     },
     methods: {
         signin: function (event) {
+            axios
+                .post('http://127.0.0.1:5000/signin', {
+                    'login': this.login,
+                    'password': this.password
+                }).then(response => (
+                    this.$store.dispatch('setJwtToken', response.data.token)
+                ));
         }
     }
 });
