@@ -62,6 +62,11 @@ const toolbar = Vue.component('toolbar', {
                             v-on:click.stop="item.method"
                         >
                             <v-list-item-title>{{ item.title }}</v-list-item-title>
+                            <popup
+                                v-model="showAboutPopup"
+                                v-bind:sections="menu.cards['aboutCard'].sections"
+                                width="480px"
+                            ></popup>
                         </v-list-item>
                     </v-list>
                 </v-menu>
@@ -73,13 +78,44 @@ const toolbar = Vue.component('toolbar', {
                 menu: {
                     menuItems: [
                         {title: 'About', method: this.menuAbout}
-                    ]
+                    ],
+                    cards: {
+                        aboutCard: {
+                            sections: [
+                                {
+                                    title: 'Photochnaja',
+                                    body: 'Photochnaja is a web application for storing your cards. Each card represents a kind of memory. The card consists of a photograph, title, subtitle and description of the memory.'
+                                },
+                                {
+                                    title: 'Features',
+                                    body: `
+                                        <ul>
+                                            <li>Download and save the card</li>
+                                            <li>Edit the card (editing the image, title, subtitle and description)</li>
+                                            <li>Download image from card</li>
+                                        </ul>
+                                    `
+                                },
+                                {
+                                    title: 'Authors',
+                                    body: `
+                                        <ul>
+                                            <li>Pavel Amelkov</li>
+                                            <li>Oleg Bobrov</li>
+                                            <li>Kirill Tolkun</li>
+                                        </ul>
+                                    `
+                                }
+                            ]
+                        }
+                    }
                 },
                 showAboutPopup: false
             }
         },
         methods: {
             menuAbout: function (event) {
+                this.showAboutPopup = true;
             },
         }
     }
