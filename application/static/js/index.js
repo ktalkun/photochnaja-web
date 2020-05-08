@@ -168,6 +168,12 @@ const signupForm = Vue.component('signup-form', {
     },
     methods: {
         signup: function (event) {
+            axios
+                .post('http://127.0.0.1:5000/signup', {
+                    'email': this.email,
+                    'login': this.login,
+                    'password': this.password
+                })
         }
     }
 })
