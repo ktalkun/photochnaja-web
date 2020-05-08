@@ -121,6 +121,15 @@ const toolbar = Vue.component('toolbar', {
     }
 )
 
+const footer = Vue.component('ph-footer', {
+    template: `
+        <v-footer fixed>
+            <v-spacer></v-spacer>
+            <div>&copy; {{new Date().getFullYear()}}</div>
+        </v-footer>
+    `
+})
+
 var app = new Vue({
     el: '#app',
     vuetify: new Vuetify(),
