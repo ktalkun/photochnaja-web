@@ -1,26 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <title>Photochnaja</title>
     <meta charset="UTF-8">
-    <title>Backend message</title>
-    <script type=text/javascript src="{{ url_for('static', filename='js/jquery-3.4.1.min.js') }}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 </head>
+
 <body>
-<script>
-    $.ajax({
-        type: "GET",
-        url: "{{ api_url }}",
-        type: 'GET',
-        success: function (response) {
-            var json = jQuery.parseJSON(response)
-            $('p').html(json.message)
-            console.log(response);
-        },
-        error: function (error) {
-            console.log(error);
-        }
-    });
-</script>
-<p></p>
+    <div id="app">
+    </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </html>
