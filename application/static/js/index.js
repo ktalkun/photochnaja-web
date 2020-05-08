@@ -173,7 +173,31 @@ const footer = Vue.component('ph-footer', {
     `
 })
 
+Vue.use(Vuex)
+const store = new Vuex.Store({
+    state: {
+        jwtToken: ''
+    },
+    actions: {
+        setJwtToken({commit}, jwtToken) {
+            commit('SET_JWT_TOKEN', jwtToken);
+        }
+    },
+    mutations: {
+        SET_JWT_TOKEN(state, jwtToken) {
+            state.jwtToken = jwtToken;
+        }
+    },
+    getters: {
+        jwtToken(state) {
+            return state.jwtToken;
+        }
+    },
+    modules: {}
+})
+
 var app = new Vue({
     el: '#app',
+    store,
     vuetify: new Vuetify(),
 });
