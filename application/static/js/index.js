@@ -1,3 +1,45 @@
+const popup = Vue.component('popup', {
+    template: `
+    <v-dialog
+        v-model="show"
+        v-on:close="show = false"
+        v-bind:width="width"
+    >
+        <v-card>
+            <div
+                v-for="(section, i) in sections"
+                v-bind:key="i"
+            >
+                <v-card-title>{{ section.title }}</v-card-title>
+                <v-card-text v-html="section.body">
+                </v-card-text>
+                <v-divider v-if="i != sections.length - 1" class="mx-4"></v-divider>
+            </div>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="show = false">Ok</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+    `,
+    props: {
+        value: Boolean,
+        sections: Array,
+        width: String
+    },
+
+    computed: {
+        show: {
+            get() {
+                return this.value
+            },
+            set(value) {
+                this.$emit('input', value)
+            }
+        }
+    }
+})
+
 const toolbar = Vue.component('toolbar', {
         template: `
         <v-card tile>
