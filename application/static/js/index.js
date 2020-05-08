@@ -285,6 +285,9 @@ const footer = Vue.component('ph-footer', {
 
 Vue.use(Vuex)
 const store = new Vuex.Store({
+    plugins: [window.createPersistedState({
+        storage: window.sessionStorage,
+    })],
     state: {
         jwtToken: ''
     },
