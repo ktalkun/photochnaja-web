@@ -174,6 +174,11 @@ const signupForm = Vue.component('signup-form', {
                     'login': this.login,
                     'password': this.password
                 })
+                .then(response => {
+                    if (response.status === 201) {
+                        this.$emit('registered', response.data)
+                    }
+                })
         }
     }
 })
@@ -249,7 +254,7 @@ const entryFormCard = Vue.component('entry-form-card', {
             </v-window-item>
 
             <v-window-item :value="2">
-                <signup-form>
+                <signup-form v-on:registered="step--"">
                     <div class="mt-5">
                         Already on Photochnaja?
                         <a v-on:click="step--; currentTitle='Sign in'">Sign in</a>
