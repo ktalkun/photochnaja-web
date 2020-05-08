@@ -228,6 +228,47 @@ const signinForm = Vue.component('signin-form', {
     }
 });
 
+const entryFormCard = Vue.component('entry-form-card', {
+    template: `
+     <v-card
+        class="mx-auto"
+        max-width="490"
+     >
+        <v-card-title class="title font-weight-regular justify-space-between">
+            <span>{{ currentTitle }}</span>
+        </v-card-title>
+
+        <v-window v-model="step" class="pa-5">
+            <v-window-item :value="1" >
+                <signin-form>
+                    <div class="mt-5">
+                        New to Photochnaja?
+                        <a v-on:click="step++; currentTitle='Sign up'">Join now</a>
+                    </div>
+                </signin-form>
+            </v-window-item>
+
+            <v-window-item :value="2">
+                <signup-form>
+                    <div class="mt-5">
+                        Already on Photochnaja?
+                        <a v-on:click="step--; currentTitle='Sign in'">Sign in</a>
+                    </div>
+                </signup-form>
+            </v-window-item>
+        </v-window>
+
+        <v-divider></v-divider>
+    </v-card>
+    `,
+    data() {
+        return {
+            currentTitle: 'Sign in',
+            step: ''
+        }
+    }
+})
+
 const footer = Vue.component('ph-footer', {
     template: `
         <v-footer fixed>
