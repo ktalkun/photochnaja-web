@@ -121,6 +121,56 @@ const toolbar = Vue.component('toolbar', {
     }
 )
 
+const signinForm = Vue.component('signin-form', {
+    template: `
+        <form
+            v-on:submit.prevent="signin"
+            class="mx-auto"
+            id="signin-form"
+            method="post">
+            <v-text-field
+                v-model="login"
+                type="text"
+                name="login"
+                placeholder="Login"
+                required/>
+            <v-text-field
+                v-model="password"
+                type="password"
+                name="password"
+                placeholder="Password"
+                required/>
+            <v-btn
+                block
+                large
+                outlined
+                color="primary"
+                form="signin-form"
+                type="submit">
+                Sign in
+            </v-btn>
+            <slot></slot>
+        </form>
+    `,
+    data() {
+        return {
+            login: '',
+            password: ''
+        };
+    },
+    methods: {
+        signin: function (event) {
+            axios
+                .post('http://127.0.0.1:5000/signin', {
+                    'login': this.login,
+                    'password': this.password
+                }).then(response => (
+                    this.$store.dispatch('setJwtToken', response.data.token)
+                ));
+        }
+    }
+});
+
 const footer = Vue.component('ph-footer', {
     template: `
         <v-footer fixed>
@@ -130,7 +180,31 @@ const footer = Vue.component('ph-footer', {
     `
 })
 
+Vue.use(Vuex)
+const store = new Vuex.Store({
+    state: {
+        jwtToken: ''
+    },
+    actions: {
+        setJwtToken({commit}, jwtToken) {
+            commit('SET_JWT_TOKEN', jwtToken);
+        }
+    },
+    mutations: {
+        SET_JWT_TOKEN(state, jwtToken) {
+            state.jwtToken = jwtToken;
+        }
+    },
+    getters: {
+        jwtToken(state) {
+            return state.jwtToken;
+        }
+    },
+    modules: {}
+})
+
 var app = new Vue({
     el: '#app',
+    store,
     vuetify: new Vuetify(),
 });
