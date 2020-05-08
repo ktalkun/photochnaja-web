@@ -121,6 +121,57 @@ const toolbar = Vue.component('toolbar', {
     }
 )
 
+const signupForm = Vue.component('signup-form', {
+    template: `
+        <form
+            v-on:submit.prevent="signup"
+            class="mx-auto"
+            id="signup-form"
+            method="post"
+        >
+            <v-text-field
+                v-model="email"
+                type="email"
+                name="email"
+                placeholder="Email"
+                required/>
+            <v-text-field
+                v-model="login"
+                type="text"
+                name="login"
+                placeholder="Login"
+                required/>
+            <v-text-field
+                v-model="password"
+                type="password"
+                name="password"
+                placeholder="Password"
+                required/>
+            <v-btn
+                block
+                large
+                outlined
+                color="primary"
+                form="signup-form"
+                type="submit">
+                Sing up
+            </v-btn>
+            <slot></slot>
+        </form>
+    `,
+    data() {
+        return {
+            email: '',
+            login: '',
+            password: ''
+        }
+    },
+    methods: {
+        signup: function (event) {
+        }
+    }
+})
+
 const signinForm = Vue.component('signin-form', {
     template: `
         <form
@@ -165,8 +216,8 @@ const signinForm = Vue.component('signin-form', {
                     'login': this.login,
                     'password': this.password
                 }).then(response => (
-                    this.$store.dispatch('setJwtToken', response.data.token)
-                ));
+                this.$store.dispatch('setJwtToken', response.data.token)
+            ));
         }
     }
 });
