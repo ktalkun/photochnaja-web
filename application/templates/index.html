@@ -26,7 +26,8 @@
     <v-app>
         <toolbar></toolbar>
         <v-content v-bind:style="{ 'padding-bottom': '60px'}">
-            <entry-form-card class="mt-12"></entry-form-card>
+            <entry-form-card v-if="!isAuthenticated"
+                             class="mt-12"></entry-form-card>
         </v-content>
         <ph-footer></ph-footer>
     </v-app>

@@ -310,4 +310,9 @@ var app = new Vue({
     el: '#app',
     store,
     vuetify: new Vuetify(),
+    computed: {
+        isAuthenticated: function (event) {
+            return this.$store.getters.jwtToken;
+        }
+    }
 });
