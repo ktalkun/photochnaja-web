@@ -31,10 +31,10 @@ const popup = Vue.component('popup', {
     computed: {
         show: {
             get() {
-                return this.value
+                return this.value;
             },
             set(value) {
-                this.$emit('input', value)
+                this.$emit('input', value);
             }
         }
     }
@@ -60,6 +60,7 @@ const toolbar = Vue.component('toolbar', {
                             v-for="(item, i) in menu.menuItems"
                             v-bind:key="i"
                             v-on:click="item.method"
+                            v-if="item.isVisible()"
                         >
                             <v-list-item-title>{{ item.title }}</v-list-item-title>
                         </v-list-item>
@@ -67,7 +68,7 @@ const toolbar = Vue.component('toolbar', {
                 </v-menu>
                 <popup
                     v-model="showAboutPopup"
-                    v-bind:sections="menu.cards['aboutCard'].sections"
+                    v-bind:sections="cards['aboutCard'].sections"
                     width="480px"
                 ></popup>
             </v-toolbar>
@@ -77,37 +78,46 @@ const toolbar = Vue.component('toolbar', {
             return {
                 menu: {
                     menuItems: [
-                        {title: 'About', method: this.menuAbout}
+                        {
+                            title: 'About',
+                            method: this.menuAbout,
+                            isVisible: () => true
+                        },
+                        {
+                            title: 'Logout',
+                            method: this.logout,
+                            isVisible: () => (!!store.getters.jwtToken)
+                        }
                     ],
-                    cards: {
-                        aboutCard: {
-                            sections: [
-                                {
-                                    title: 'Photochnaja',
-                                    body: 'Photochnaja is a web application for storing your cards. Each card represents a kind of memory. The card consists of a photograph, title, subtitle and description of the memory.'
-                                },
-                                {
-                                    title: 'Features',
-                                    body: `
+                },
+                cards: {
+                    aboutCard: {
+                        sections: [
+                            {
+                                title: 'Photochnaja',
+                                body: 'Photochnaja is a web application for storing your cards. Each card represents a kind of memory. The card consists of a photograph, title, subtitle and description of the memory.'
+                            },
+                            {
+                                title: 'Features',
+                                body: `
                                         <ul>
                                             <li>Download and save the card</li>
                                             <li>Edit the card (editing the image, title, subtitle and description)</li>
                                             <li>Download image from card</li>
                                         </ul>
                                     `
-                                },
-                                {
-                                    title: 'Authors',
-                                    body: `
+                            },
+                            {
+                                title: 'Authors',
+                                body: `
                                         <ul>
                                             <li>Pavel Amelkov</li>
                                             <li>Oleg Bobrov</li>
                                             <li>Kirill Tolkun</li>
                                         </ul>
                                     `
-                                }
-                            ]
-                        }
+                            }
+                        ]
                     }
                 },
                 showAboutPopup: false
@@ -117,6 +127,9 @@ const toolbar = Vue.component('toolbar', {
             menuAbout: function (event) {
                 this.showAboutPopup = true;
             },
+            logout: function (event) {
+                this.$store.dispatch('setJwtToken', '');
+            }
         }
     }
 )
@@ -164,7 +177,7 @@ const signupForm = Vue.component('signup-form', {
             email: '',
             login: '',
             password: ''
-        }
+        };
     },
     methods: {
         signup: function (event) {
@@ -176,7 +189,7 @@ const signupForm = Vue.component('signup-form', {
                 })
                 .then(response => {
                     if (response.status === 201) {
-                        this.$emit('registered', response.data)
+                        this.$emit('registered', response.data);
                     }
                 })
         }
@@ -288,7 +301,7 @@ const entryFormCard = Vue.component('entry-form-card', {
         return {
             currentTitle: 'Sign in',
             step: ''
-        }
+        };
     }
 })
 
@@ -332,8 +345,8 @@ var app = new Vue({
     store,
     vuetify: new Vuetify(),
     computed: {
-        isAuthenticated: function (event) {
-            return this.$store.getters.jwtToken;
+        isAuthenticated: function () {
+            return !!this.$store.getters.jwtToken;
         }
     }
 });
