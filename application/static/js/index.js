@@ -211,13 +211,25 @@ const signinForm = Vue.component('signin-form', {
                 type="submit">
                 Sign in
             </v-btn>
+            <v-alert
+                dismissible
+                v-model="alert.isVisibleAlert"
+                v-bind:type="alert.alertType"
+                class="mt-5"
+                transition="scale-transition"
+            >{{ alert.alertBody }}</v-alert>
             <slot></slot>
         </form>
     `,
     data() {
         return {
             login: '',
-            password: ''
+            password: '',
+            alert:{
+                isVisibleAlert: false,
+                alertType: 'info',
+                alertBody: ''
+            }
         };
     },
     methods: {
@@ -226,9 +238,15 @@ const signinForm = Vue.component('signin-form', {
                 .post('http://127.0.0.1:5000/signin', {
                     'login': this.login,
                     'password': this.password
-                }).then(response => (
-                this.$store.dispatch('setJwtToken', response.data.token)
-            ));
+                })
+                .then(response => (
+                    this.$store.dispatch('setJwtToken', response.data.token)
+                ))
+                .catch(reason => {
+                    this.alert.isVisibleAlert = true
+                    this.alert.alertType = 'error'
+                    this.alert.alertBody = reason.response.data.message
+                });
         }
     }
 });
