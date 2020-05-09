@@ -82,6 +82,11 @@ const toolbar = Vue.component('toolbar', {
                             title: 'About',
                             method: this.menuAbout,
                             isVisible: () => true
+                        },
+                        {
+                            title: 'Logout',
+                            method: this.logout,
+                            isVisible: () => (!!store.getters.jwtToken)
                         }
                     ],
                 },
@@ -122,6 +127,9 @@ const toolbar = Vue.component('toolbar', {
             menuAbout: function (event) {
                 this.showAboutPopup = true;
             },
+            logout: function (event) {
+                this.$store.dispatch('setJwtToken', '');
+            }
         }
     }
 )
