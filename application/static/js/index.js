@@ -46,6 +46,22 @@ const toolbar = Vue.component('toolbar', {
             <v-toolbar class="elevation-0">
                 <v-toolbar-title>Photochnaja</v-toolbar-title>
                 <v-spacer></v-spacer>
+                <v-btn
+                    v-on:click="uploadFileButton"
+                    outlined
+                    small
+                    color="indigo"
+                >
+                <v-icon>mdi-plus</v-icon>
+                </v-btn>
+                <input
+                    v-on:change="uploadFileInput"
+                    ref="inputUploadFileRef"
+                    hidden
+                    type="file"
+                    multiple
+                    accept="image/*"
+                />
                 <v-menu :offset-y="true">
                     <template v-slot:activator="{ on }">
                         <v-btn
@@ -126,6 +142,29 @@ const toolbar = Vue.component('toolbar', {
         methods: {
             menuAbout: function (event) {
                 this.showAboutPopup = true;
+            },
+            uploadFileButton: function (event) {
+                this.$refs.inputUploadFileRef.click();
+            },
+            uploadFileInput: function (event) {
+                let files = event.target.files || event.dataTransfer.files;
+                let length = files.length;
+                formData = new FormData();
+                for (var i = 0; i < files.length; i++) {
+                    formData.append(`file[${i}]`, files[i]);
+                    formData.append('login', 'testLogin');
+                }
+                axios
+                    .post('http://127.0.0.1:5000/test', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Authorization': `Bearer ${this.$store.getters.jwtToken}`
+                        }
+                    })
+                    .then(response => {
+                        var tmp = response.data;
+                    });
+                event.target.value=''
             },
             logout: function (event) {
                 this.$store.dispatch('setJwtToken', '');
