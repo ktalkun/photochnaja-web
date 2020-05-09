@@ -59,17 +59,17 @@ const toolbar = Vue.component('toolbar', {
                         <v-list-item
                             v-for="(item, i) in menu.menuItems"
                             v-bind:key="i"
-                            v-on:click.stop="item.method"
+                            v-on:click="item.method"
                         >
                             <v-list-item-title>{{ item.title }}</v-list-item-title>
-                            <popup
-                                v-model="showAboutPopup"
-                                v-bind:sections="menu.cards['aboutCard'].sections"
-                                width="480px"
-                            ></popup>
                         </v-list-item>
                     </v-list>
                 </v-menu>
+                <popup
+                    v-model="showAboutPopup"
+                    v-bind:sections="menu.cards['aboutCard'].sections"
+                    width="480px"
+                ></popup>
             </v-toolbar>
         </v-card>
         `,
@@ -225,7 +225,7 @@ const signinForm = Vue.component('signin-form', {
         return {
             login: '',
             password: '',
-            alert:{
+            alert: {
                 isVisibleAlert: false,
                 alertType: 'info',
                 alertBody: ''
