@@ -40,6 +40,29 @@ const popup = Vue.component('popup', {
     }
 })
 
+const snackbar = Vue.component('snackbar', {
+    template: `
+        <v-snackbar
+            v-model="snack.isVisible"
+            v-bind:timeout.number="snack.timeout"
+            v-bind:color="snack.color"
+            v-bind:bottom="true"
+          >
+            {{ snack.text }}
+            <v-btn
+              dark
+              text
+              @click="snack.isVisible = false"
+            >
+              Close
+            </v-btn>
+          </v-snackbar>
+    `,
+    props: {
+        snack: Object
+    },
+})
+
 const toolbar = Vue.component('toolbar', {
         template: `
         <v-card tile>
@@ -164,7 +187,7 @@ const toolbar = Vue.component('toolbar', {
                     .then(response => {
                         var tmp = response.data;
                     });
-                event.target.value=''
+                event.target.value = '';
             },
             logout: function (event) {
                 this.$store.dispatch('setJwtToken', '');
