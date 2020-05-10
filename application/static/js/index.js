@@ -382,6 +382,34 @@ const entryFormCard = Vue.component('entry-form-card', {
     }
 })
 
+const photoCard = Vue.component('photo-card', {
+    template: `
+    <v-card>
+        <v-img
+                v-bind:src="photoCard.url"
+                height="200px"
+        ></v-img>
+    </v-card>
+    `,
+    props: {
+        photoCard: Object
+    },
+    methods: {
+        deletePhotoCard: function (event) {
+            axios
+                .post('http://127.0.0.1:5000/photocards', photoCard, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.$store.getters.jwtToken}`
+                    }
+                })
+                .then(response => {
+
+                });
+        }
+    }
+})
+
 const footer = Vue.component('ph-footer', {
     template: `
         <v-footer fixed>
