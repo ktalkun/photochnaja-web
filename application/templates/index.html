@@ -29,6 +29,12 @@
             <entry-form-card v-if="!isAuthenticated"
                              class="mt-12"></entry-form-card>
         </v-content>
+        <snackbar
+                v-for="(item, i) in Object.entries(snacks)"
+                :key="i"
+                :snack="item[1]"
+                :style="{'margin-bottom': 36 * (i + 1) + 25 * i + 'px'}"
+        ></snackbar>
         <ph-footer></ph-footer>
     </v-app>
 </div>
