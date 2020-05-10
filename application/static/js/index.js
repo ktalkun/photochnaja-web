@@ -379,24 +379,37 @@ const footer = Vue.component('ph-footer', {
 Vue.use(Vuex)
 const store = new Vuex.Store({
     plugins: [window.createPersistedState({
-        storage: window.sessionStorage,
+        paths: ['jwtToken'],
+        storage: window.sessionStorage
     })],
     state: {
-        jwtToken: ''
+        jwtToken: '',
+        snacks: {
+            'upload': {}
+        }
     },
     actions: {
         setJwtToken({commit}, jwtToken) {
             commit('SET_JWT_TOKEN', jwtToken);
+        },
+        setSnack({commit}, snack) {
+            commit('SET_SNACK', snack);
         }
     },
     mutations: {
         SET_JWT_TOKEN(state, jwtToken) {
             state.jwtToken = jwtToken;
+        },
+        SET_SNACK(state, snack) {
+            state.snacks[snack.name] = snack;
         }
     },
     getters: {
         jwtToken(state) {
             return state.jwtToken;
+        },
+        snacks(state) {
+            return state.snacks;
         }
     },
     modules: {}
