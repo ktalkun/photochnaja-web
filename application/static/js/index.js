@@ -78,22 +78,24 @@ const toolbar = Vue.component('toolbar', {
             <v-toolbar class="elevation-0">
                 <v-toolbar-title>Photochnaja</v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-btn
-                    v-on:click="uploadFileButton"
-                    outlined
-                    small
-                    color="indigo"
-                >
-                <v-icon>mdi-plus</v-icon>
-                </v-btn>
-                <input
-                    v-on:change="uploadFileInput"
-                    ref="inputUploadFileRef"
-                    hidden
-                    type="file"
-                    multiple
-                    accept="image/*"
-                />
+                <div v-if="isAuthenticated">
+                    <v-btn
+                        v-on:click="uploadFileButton"
+                        outlined
+                        small
+                        color="indigo"
+                    >
+                    <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                    <input
+                        v-on:change="uploadFileInput"
+                        ref="inputUploadFileRef"
+                        hidden
+                        type="file"
+                        multiple
+                        accept="image/*"
+                    />
+                </div>
                 <v-menu :offset-y="true">
                     <template v-slot:activator="{ on }">
                         <v-btn
@@ -169,6 +171,11 @@ const toolbar = Vue.component('toolbar', {
                     }
                 },
                 showAboutPopup: false
+            }
+        },
+        computed: {
+            isAuthenticated: function () {
+                return !!store.getters.jwtToken;
             }
         },
         methods: {
