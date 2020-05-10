@@ -191,22 +191,36 @@ const toolbar = Vue.component('toolbar', {
                 formData = new FormData();
                 for (var i = 0; i < files.length; i++) {
                     formData.append(`file[${i}]`, files[i]);
-                    formData.append('login', 'testLogin');
                 }
                 axios
-                    .post('http://127.0.0.1:5000/test', formData, {
+                    .post('http://127.0.0.1:5000/photocards', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                             'Authorization': `Bearer ${this.$store.getters.jwtToken}`
                         }
                     })
                     .then(response => {
-                        store.dispatch('setSnack', new Snack('upload', response.data.number_files + ' files were uploaded'))
+                        this.$store.dispatch('setSnack',
+                            new Snack('upload_photo_card',
+                                response.data.number_files
+                                + ' files were uploaded'));
+                        axios
+                            .get('http://127.0.0.1:5000/photocards', {
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${this.$store.getters.jwtToken}`
+                                }
+                            })
+                            .then(response => {
+                                this.$store.dispatch('clearPhotoCards')
+                                this.$store.dispatch('addPhotoCards', response.data.photoCards);
+                            });
                     });
                 event.target.value = '';
             },
             logout: function (event) {
                 this.$store.dispatch('setJwtToken', '');
+                this.$store.dispatch('clearPhotoCards');
             }
         }
     }
@@ -245,7 +259,7 @@ const signupForm = Vue.component('signup-form', {
                 color="primary"
                 form="signup-form"
                 type="submit">
-                Sing up
+                Sign up
             </v-btn>
             <slot></slot>
         </form>
@@ -330,9 +344,19 @@ const signinForm = Vue.component('signin-form', {
                     'login': this.login,
                     'password': this.password
                 })
-                .then(response => (
+                .then(response => {
                     this.$store.dispatch('setJwtToken', response.data.token)
-                ))
+                    axios
+                        .get('http://127.0.0.1:5000/photocards', {
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${this.$store.getters.jwtToken}`
+                            }
+                        })
+                        .then(response => (
+                            this.$store.dispatch('addPhotoCards', response.data.photoCards)
+                        ));
+                })
                 .catch(reason => {
                     this.alert.isVisibleAlert = true
                     this.alert.alertType = 'error'
@@ -383,6 +407,52 @@ const entryFormCard = Vue.component('entry-form-card', {
     }
 })
 
+const photoCard = Vue.component('photo-card', {
+    template: `
+    <v-card>
+        <v-img
+                v-bind:src="photoCard.url"
+                height="200px"
+        ></v-img>
+        
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+                v-on:click="deletePhotoCard"             
+                color="red"
+                text
+            >
+              Delete
+            </v-btn>
+        </v-card-actions>
+    </v-card>
+    `,
+    props: {
+        photoCard: Object
+    },
+    methods: {
+        deletePhotoCard: function (event) {
+            axios
+                .delete('http://127.0.0.1:5000/photocards', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.$store.getters.jwtToken}`
+                    },
+                    params: {
+                        name: this.photoCard.name
+                    }
+                })
+                .then(response => {
+                    this.$store.dispatch('removePhotoCard', response.data.name);
+                    this.$store.dispatch('setSnack',
+                        new Snack('delete_photo_card',
+                            response.data.number_files
+                            + ' files were deleted'));
+                });
+        }
+    }
+})
+
 const footer = Vue.component('ph-footer', {
     template: `
         <v-footer fixed>
@@ -395,14 +465,16 @@ const footer = Vue.component('ph-footer', {
 Vue.use(Vuex)
 const store = new Vuex.Store({
     plugins: [window.createPersistedState({
-        paths: ['jwtToken'],
+        paths: ['jwtToken', 'photoCards'],
         storage: window.sessionStorage
     })],
     state: {
         jwtToken: '',
         snacks: {
-            'upload': {}
-        }
+            'upload_photo_card': {},
+            'delete_photo_card': {}
+        },
+        photoCards: []
     },
     actions: {
         setJwtToken({commit}, jwtToken) {
@@ -410,6 +482,15 @@ const store = new Vuex.Store({
         },
         setSnack({commit}, snack) {
             commit('SET_SNACK', snack);
+        },
+        addPhotoCards({commit}, photoCards) {
+            commit('ADD_PHOTO_CARDS', photoCards);
+        },
+        removePhotoCard({commit}, photoCardName) {
+            commit('REMOVE_PHOTO_CARD', photoCardName);
+        },
+        clearPhotoCards({commit}) {
+            commit('CLEAR_PHOTO_CARDS');
         }
     },
     mutations: {
@@ -418,6 +499,17 @@ const store = new Vuex.Store({
         },
         SET_SNACK(state, snack) {
             state.snacks[snack.name] = snack;
+        },
+        ADD_PHOTO_CARDS(state, photoCards) {
+            state.photoCards = state.photoCards.concat(photoCards);
+        },
+        REMOVE_PHOTO_CARD(state, photoCardName) {
+            photoCardIndex = state.photoCards
+                .findIndex(item => item.name === photoCardName);
+            state.photoCards.splice(photoCardIndex, 1);
+        },
+        CLEAR_PHOTO_CARDS(state) {
+            state.photoCards = [];
         }
     },
     getters: {
@@ -426,6 +518,9 @@ const store = new Vuex.Store({
         },
         snacks(state) {
             return state.snacks;
+        },
+        photoCards(state) {
+            return state.photoCards;
         }
     },
     modules: {}
@@ -440,7 +535,16 @@ var app = new Vue({
             return !!this.$store.getters.jwtToken;
         },
         snacks: function () {
-            return this.$store.getters.snacks;
+            return Object
+                .entries(this.$store.state.snacks)
+                .filter(item => (
+                    // console.log();
+                    Object.entries(item)[1][1].isVisible === true
+                    || Object.entries(item)[1][1].isVisible == undefined
+                ));
+        },
+        photoCards: function () {
+            return this.$store.getters.photoCards;
         }
     }
 });

@@ -28,9 +28,29 @@
         <v-content v-bind:style="{ 'padding-bottom': '60px'}">
             <entry-form-card v-if="!isAuthenticated"
                              class="mt-12"></entry-form-card>
+            <v-container
+                    v-if="isAuthenticated"
+                    fluid
+                    class="px-6 py-3"
+            >
+                <v-row>
+                    <v-col
+                            v-for="(item, i) in photoCards"
+                            v-bind:key="i"
+                            xs="6"
+                            sm="4"
+                            md="3"
+                            lg="2"
+                    >
+                        <photo-card
+                                v-bind:photo-card="item"
+                        ></photo-card>
+                    </v-col>
+                </v-row>
+            </v-container>
         </v-content>
         <snackbar
-                v-for="(item, i) in Object.entries(snacks)"
+                v-for="(item, i) in snacks"
                 :key="i"
                 :snack="item[1]"
                 :style="{'margin-bottom': 36 * (i + 1) + 25 * i + 'px'}"
