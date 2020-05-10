@@ -422,6 +422,9 @@ var app = new Vue({
     computed: {
         isAuthenticated: function () {
             return !!this.$store.getters.jwtToken;
+        },
+        snacks: function () {
+            return this.$store.getters.snacks;
         }
     }
 });
