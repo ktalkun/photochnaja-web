@@ -203,7 +203,18 @@ const toolbar = Vue.component('toolbar', {
                         this.$store.dispatch('setSnack',
                             new Snack('upload_photo_card',
                                 response.data.number_files
-                                + ' files were uploaded'))
+                                + ' files were uploaded'));
+                        axios
+                            .get('http://127.0.0.1:5000/photocards', {
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${this.$store.getters.jwtToken}`
+                                }
+                            })
+                            .then(response => {
+                                this.$store.dispatch('clearPhotoCards')
+                                this.$store.dispatch('addPhotoCards', response.data.photoCards);
+                            });
                     });
                 event.target.value = '';
             },
