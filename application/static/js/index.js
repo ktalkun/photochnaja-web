@@ -206,6 +206,7 @@ const toolbar = Vue.component('toolbar', {
             },
             logout: function (event) {
                 this.$store.dispatch('setJwtToken', '');
+                this.$store.dispatch('clearPhotoCards');
             }
         }
     }
@@ -329,9 +330,19 @@ const signinForm = Vue.component('signin-form', {
                     'login': this.login,
                     'password': this.password
                 })
-                .then(response => (
+                .then(response => {
                     this.$store.dispatch('setJwtToken', response.data.token)
-                ))
+                    axios
+                        .get('http://127.0.0.1:5000/photocards', {
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${this.$store.getters.jwtToken}`
+                            }
+                        })
+                        .then(response => (
+                            this.$store.dispatch('addPhotoCards', response.data.photoCards)
+                        ));
+                })
                 .catch(reason => {
                     this.alert.isVisibleAlert = true
                     this.alert.alertType = 'error'
@@ -422,14 +433,15 @@ const footer = Vue.component('ph-footer', {
 Vue.use(Vuex)
 const store = new Vuex.Store({
     plugins: [window.createPersistedState({
-        paths: ['jwtToken'],
+        paths: ['jwtToken', 'photoCards'],
         storage: window.sessionStorage
     })],
     state: {
         jwtToken: '',
         snacks: {
             'upload': {}
-        }
+        },
+        photoCards: []
     },
     actions: {
         setJwtToken({commit}, jwtToken) {
@@ -437,6 +449,12 @@ const store = new Vuex.Store({
         },
         setSnack({commit}, snack) {
             commit('SET_SNACK', snack);
+        },
+        addPhotoCards({commit}, photoCards) {
+            commit('ADD_PHOTO_CARDS', photoCards);
+        },
+        clearPhotoCards({commit}) {
+            commit('CLEAR_PHOTO_CARDS');
         }
     },
     mutations: {
@@ -445,6 +463,12 @@ const store = new Vuex.Store({
         },
         SET_SNACK(state, snack) {
             state.snacks[snack.name] = snack;
+        },
+        ADD_PHOTO_CARDS(state, photoCards) {
+            state.photoCards = state.photoCards.concat(photoCards);
+        },
+        CLEAR_PHOTO_CARDS(state) {
+            state.photoCards = [];
         }
     },
     getters: {
@@ -453,6 +477,9 @@ const store = new Vuex.Store({
         },
         snacks(state) {
             return state.snacks;
+        },
+        photoCards(state) {
+            return state.photoCards;
         }
     },
     modules: {}
@@ -468,6 +495,9 @@ var app = new Vue({
         },
         snacks: function () {
             return this.$store.getters.snacks;
+        },
+        photoCards: function () {
+            return this.$store.getters.photoCards;
         }
     }
 });
