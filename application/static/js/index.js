@@ -191,17 +191,16 @@ const toolbar = Vue.component('toolbar', {
                 formData = new FormData();
                 for (var i = 0; i < files.length; i++) {
                     formData.append(`file[${i}]`, files[i]);
-                    formData.append('login', 'testLogin');
                 }
                 axios
-                    .post('http://127.0.0.1:5000/test', formData, {
+                    .post('http://127.0.0.1:5000/photocards', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                             'Authorization': `Bearer ${this.$store.getters.jwtToken}`
                         }
                     })
                     .then(response => {
-                        store.dispatch('setSnack', new Snack('upload', response.data.number_files + ' files were uploaded'))
+                        this.$store.dispatch('setSnack', new Snack('upload', response.data.number_files + ' files were uploaded'))
                     });
                 event.target.value = '';
             },
@@ -245,7 +244,7 @@ const signupForm = Vue.component('signup-form', {
                 color="primary"
                 form="signup-form"
                 type="submit">
-                Sing up
+                Sign up
             </v-btn>
             <slot></slot>
         </form>
