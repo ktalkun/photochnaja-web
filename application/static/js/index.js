@@ -200,7 +200,10 @@ const toolbar = Vue.component('toolbar', {
                         }
                     })
                     .then(response => {
-                        this.$store.dispatch('setSnack', new Snack('upload', response.data.number_files + ' files were uploaded'))
+                        this.$store.dispatch('setSnack',
+                            new Snack('upload_photo_card',
+                                response.data.number_files
+                                + ' files were uploaded'))
                     });
                 event.target.value = '';
             },
@@ -400,6 +403,17 @@ const photoCard = Vue.component('photo-card', {
                 v-bind:src="photoCard.url"
                 height="200px"
         ></v-img>
+        
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+                v-on:click="deletePhotoCard"             
+                color="red"
+                text
+            >
+              Delete
+            </v-btn>
+        </v-card-actions>
     </v-card>
     `,
     props: {
@@ -408,14 +422,20 @@ const photoCard = Vue.component('photo-card', {
     methods: {
         deletePhotoCard: function (event) {
             axios
-                .post('http://127.0.0.1:5000/photocards', photoCard, {
+                .delete('http://127.0.0.1:5000/photocards', {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${this.$store.getters.jwtToken}`
+                    },
+                    params: {
+                        name: this.photoCard.name
                     }
                 })
                 .then(response => {
-
+                    this.$store.dispatch('setSnack',
+                        new Snack('delete_photo_card',
+                            response.data.number_files
+                            + ' files were deleted'));
                 });
         }
     }
@@ -439,7 +459,8 @@ const store = new Vuex.Store({
     state: {
         jwtToken: '',
         snacks: {
-            'upload': {}
+            'upload_photo_card': {},
+            'delete_photo_card': {}
         },
         photoCards: []
     },
@@ -494,7 +515,13 @@ var app = new Vue({
             return !!this.$store.getters.jwtToken;
         },
         snacks: function () {
-            return this.$store.getters.snacks;
+            return Object
+                .entries(this.$store.state.snacks)
+                .filter(item => (
+                    // console.log();
+                    Object.entries(item)[1][1].isVisible === true
+                    || Object.entries(item)[1][1].isVisible == undefined
+                ));
         },
         photoCards: function () {
             return this.$store.getters.photoCards;
