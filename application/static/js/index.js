@@ -40,6 +40,15 @@ const popup = Vue.component('popup', {
     }
 })
 
+class Snack {
+    constructor(name, text, isVisible = true, timeout = 6000) {
+        this.name = name;
+        this.text = text;
+        this.isVisible = isVisible;
+        this.timeout = timeout;
+    }
+}
+
 const snackbar = Vue.component('snackbar', {
     template: `
         <v-snackbar
@@ -185,7 +194,7 @@ const toolbar = Vue.component('toolbar', {
                         }
                     })
                     .then(response => {
-                        var tmp = response.data;
+                        store.dispatch('setSnack', new Snack('upload', response.data.number_files + ' files were uploaded'))
                     });
                 event.target.value = '';
             },
