@@ -432,6 +432,7 @@ const photoCard = Vue.component('photo-card', {
                     }
                 })
                 .then(response => {
+                    this.$store.dispatch('removePhotoCard', response.data.name);
                     this.$store.dispatch('setSnack',
                         new Snack('delete_photo_card',
                             response.data.number_files
@@ -474,6 +475,9 @@ const store = new Vuex.Store({
         addPhotoCards({commit}, photoCards) {
             commit('ADD_PHOTO_CARDS', photoCards);
         },
+        removePhotoCard({commit}, photoCardName) {
+            commit('REMOVE_PHOTO_CARD', photoCardName);
+        },
         clearPhotoCards({commit}) {
             commit('CLEAR_PHOTO_CARDS');
         }
@@ -487,6 +491,11 @@ const store = new Vuex.Store({
         },
         ADD_PHOTO_CARDS(state, photoCards) {
             state.photoCards = state.photoCards.concat(photoCards);
+        },
+        REMOVE_PHOTO_CARD(state, photoCardName) {
+            photoCardIndex = state.photoCards
+                .findIndex(item => item.name === photoCardName);
+            state.photoCards.splice(photoCardIndex, 1);
         },
         CLEAR_PHOTO_CARDS(state) {
             state.photoCards = [];
