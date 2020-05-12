@@ -409,26 +409,41 @@ const entryFormCard = Vue.component('entry-form-card', {
 
 const photoCard = Vue.component('photo-card', {
     template: `
-    <v-card>
-        <v-img
+        <v-card>
+            <v-img
                 v-bind:src="photoCard.url"
                 height="200px"
-        ></v-img>
-        
-        <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-                v-on:click="deletePhotoCard"             
-                color="red"
-                text
-            >
-              Delete
-            </v-btn>
-        </v-card-actions>
-    </v-card>
+            ></v-img>
+            <image-cropper
+                v-model="dialog"
+                v-bind:photoCard="photoCard"
+                v-bind:apply="crop"
+            ></image-cropper>
+            <v-card-actions>
+                <v-btn
+                    v-on:click="dialog = true"
+                    text
+                >
+                    Crop
+                </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn
+                    v-on:click="deletePhotoCard"
+                    color="red"
+                    text
+                >
+                  Delete
+                </v-btn>
+            </v-card-actions>
+        </v-card>
     `,
     props: {
         photoCard: Object
+    },
+    data() {
+        return {
+            dialog: false
+        };
     },
     methods: {
         deletePhotoCard: function (event) {
@@ -449,6 +464,8 @@ const photoCard = Vue.component('photo-card', {
                             response.data.number_files
                             + ' files were deleted'));
                 });
+        },
+        crop: function (event) {
         }
     }
 })
