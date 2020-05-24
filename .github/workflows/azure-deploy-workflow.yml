@@ -11,6 +11,8 @@ on:
     types: [ start-azure-deploy-workflow ]
 
 env:
+  AZURE_WEBAPP_NAME: photochnaja-tku-web # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: '.'         # set this to the path to your web app project, defaults to the repository root
   PYTHON_VERSION: '3.7'                  # set this to the python version to use
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
