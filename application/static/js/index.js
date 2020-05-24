@@ -193,7 +193,7 @@ const toolbar = Vue.component('toolbar', {
                     formData.append(`file[${i}]`, files[i]);
                 }
                 axios
-                    .post('http://127.0.0.1:5000/photocards', formData, {
+                    .post(api_url + 'photocards', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                             'Authorization': `Bearer ${this.$store.getters.jwtToken}`
@@ -205,7 +205,7 @@ const toolbar = Vue.component('toolbar', {
                                 response.data.number_files
                                 + ' files were uploaded'));
                         axios
-                            .get('http://127.0.0.1:5000/photocards', {
+                            .get(api_url + 'photocards', {
                                 headers: {
                                     'Content-Type': 'application/json',
                                     'Authorization': `Bearer ${this.$store.getters.jwtToken}`
@@ -274,7 +274,7 @@ const signupForm = Vue.component('signup-form', {
     methods: {
         signup: function (event) {
             axios
-                .post('http://127.0.0.1:5000/signup', {
+                .post(api_url + 'signup', {
                     'email': this.email,
                     'login': this.login,
                     'password': this.password
@@ -340,14 +340,14 @@ const signinForm = Vue.component('signin-form', {
     methods: {
         signin: function (event) {
             axios
-                .post('http://127.0.0.1:5000/signin', {
+                .post(api_url + 'signin', {
                     'login': this.login,
                     'password': this.password
                 })
                 .then(response => {
                     this.$store.dispatch('setJwtToken', response.data.token)
                     axios
-                        .get('http://127.0.0.1:5000/photocards', {
+                        .get(api_url + 'photocards', {
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Authorization': `Bearer ${this.$store.getters.jwtToken}`
@@ -448,7 +448,7 @@ const photoCard = Vue.component('photo-card', {
     methods: {
         deletePhotoCard: function (event) {
             axios
-                .delete('http://127.0.0.1:5000/photocards', {
+                .delete(api_url + 'photocards', {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${this.$store.getters.jwtToken}`
