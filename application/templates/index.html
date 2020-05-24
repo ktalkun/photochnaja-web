@@ -10,6 +10,8 @@
           rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css"
           rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/croppr/croppr.min.css') }}"
+          rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"
           rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
@@ -63,5 +65,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vuex/3.2.0/vuex.min.js"></script>
 <script src="https://unpkg.com/vuex-persistedstate/dist/vuex-persistedstate.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="{{ url_for('static', filename='js/croppr/croppr.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 </html>
