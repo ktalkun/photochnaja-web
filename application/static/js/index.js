@@ -417,7 +417,7 @@ const photoCard = Vue.component('photo-card', {
             <image-cropper
                 v-model="dialog"
                 v-bind:photoCard="photoCard"
-                v-bind:apply="crop"
+                v-on:apply="crop"
             ></image-cropper>
             <v-card-actions>
                 <v-btn
@@ -442,7 +442,8 @@ const photoCard = Vue.component('photo-card', {
     },
     data() {
         return {
-            dialog: false
+            dialog: false,
+            interval_id: null
         };
     },
     methods: {
@@ -465,7 +466,73 @@ const photoCard = Vue.component('photo-card', {
                             + ' files were deleted'));
                 });
         },
-        crop: function (event) {
+        crop: function (cropConfig, photoCardName) {
+            axios
+                .post(api_url + 'crop', {
+                    'name': photoCardName,
+                    'crop_config': cropConfig
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.$store.getters.jwtToken}`
+                    }
+                })
+                .then(response => {
+                    this.dialog = false;
+                    this.interval_id = setInterval(this.updatePhotoCard, 2000, response.data.uuid);
+                });
+        },
+        updatePhotoCard: function (uuid) {
+            axios
+                .get(api_url + 'crop', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.$store.getters.jwtToken}`
+                    },
+                    params: {
+                        uuid: uuid
+                    }
+                })
+                .then(response => {
+                    if (response.data.is_cropped) {
+                        uuid = this.generage_uuid();
+
+                        let imageNodes = document.querySelectorAll(".croppr img");
+                        for (let i = 0; i < imageNodes.length; i++) {
+                            if (imageNodes[i].src === this.photoCard.url) {
+                                let index_start_version
+                                    = imageNodes[i].src.lastIndexOf('?');
+                                if (index_start_version != -1) {
+                                    imageNodes[i].src = imageNodes[i].src.slice(0,
+                                        index_start_version)
+                                        + '?v=' + uuid;
+                                } else {
+                                    imageNodes[i].src += '?v=' + uuid;
+                                }
+                            }
+                        }
+
+                        let index_start_version
+                            = this.photoCard.url.lastIndexOf('?');
+                        if (index_start_version != -1) {
+                            this.photoCard.url
+                                = this.photoCard.url.slice(0, index_start_version)
+                                + '?v=' + uuid;
+                        } else {
+                            this.photoCard.url += '?v=' + uuid;
+                        }
+                        clearInterval(this.interval_id)
+                    }
+                });
+        },
+        generage_uuid: function () {
+            let dt = new Date().getTime();
+            let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = (dt + Math.random() * 16) % 16 | 0;
+                dt = Math.floor(dt / 16);
+                return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+            return uuid;
         }
     }
 })
@@ -501,7 +568,7 @@ const imageCropper = Vue.component('image-cropper', {
             <v-btn
                 color="green darken-1"
                 text
-                v-on:click="$emit('apply', croppedImageInfo)"
+                v-on:click="$emit('apply', cropConfig, photoCard.name);"
             >
                 Apply
             </v-btn>
@@ -519,7 +586,7 @@ const imageCropper = Vue.component('image-cropper', {
         };
     },
     computed: {
-        croppedImageInfo: function () {
+        cropConfig: function () {
             return this.cropInstanse.getValue();
         }
     },
